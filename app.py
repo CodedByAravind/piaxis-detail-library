@@ -8,7 +8,7 @@ from sqlalchemy import or_
 app = Flask(__name__)
 
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:aravind@localhost:5432/piaxis_local"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:<password>@localhost:5432/piaxis_local"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
