@@ -47,3 +47,11 @@ python app.py
 ```bash
 http://127.0.0.1:5000/
 ```
+## Assignment 2: Row-Level Security (RLS)
+
+### How to switch users / roles
+User role is passed via request headers.
+
+Example headers:
+X-USER-ROLE: admin  
+X-USER-ROLE: architect

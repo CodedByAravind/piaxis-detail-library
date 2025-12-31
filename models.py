@@ -8,6 +8,7 @@ class Detail(db.Model):
     category = db.Column(db.Text)
     tags = db.Column(db.Text)
     description = db.Column(db.Text)
+    source = db.Column(db.Text)
 
 class DetailUsageRule(db.Model):
     __tablename__ = "detail_usage_rules"

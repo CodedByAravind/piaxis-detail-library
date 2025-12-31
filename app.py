@@ -2,13 +2,13 @@ from flask import Flask, jsonify, request, render_template
 from db import db
 import models
 from models import Detail, DetailUsageRule
-from sqlalchemy import or_
+from sqlalchemy import or_, text
 
 
 app = Flask(__name__)
 
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:<password>@localhost:5432/piaxis_local"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:aravind@localhost:5432/piaxis_local"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
@@ -148,6 +148,28 @@ def suggest_detail():
         },
         "explanation": explanation
     })
+
+@app.route("/secure/details", methods=["GET"])
+def secure_details():
+    role = request.headers.get("X-USER-ROLE", "architect")
+    db.session.execute(
+            text("SET LOCAL app.user_role = :role"),
+            {"role": role}
+        )
+
+
+
+    details = Detail.query.all()
+
+    result = []
+    for d in details:
+        result.append({
+            "id": d.id,
+            "title": d.title,
+            "source": d.source
+        })
+
+    return jsonify(result)
 
 
 if __name__ == "__main__":
