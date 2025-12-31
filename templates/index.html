@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Piaxis Detail Library</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5 mb-5">
+
+    <h3 class="mb-4 text-center">Suggest Architectural Detail</h3>
+
+    <form method="POST" class="mb-4">
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <label class="form-label">Host Element</label>
+                <select name="host_element" class="form-select" required>
+                    <option value="External Wall">External Wall</option>
+                    <option value="Window">Window</option>
+                    <option value="Internal Wall">Internal Wall</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Adjacent Element</label>
+                <select name="adjacent_element" class="form-select" required>
+                    <option value="Slab">Slab</option>
+                    <option value="External Wall">External Wall</option>
+                    <option value="Floor">Floor</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Exposure</label>
+                <select name="exposure" class="form-select" required>
+                    <option value="External">External</option>
+                    <option value="Internal">Internal</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                Suggest Detail
+            </button>
+        </div>
+    </form>
+
+    {% if result %}
+        <div class="card mb-4">
+            <div class="card-body">
+                {% if 'error' in result %}
+                    <p class="text-danger mb-0">{{ result.error }}</p>
+                {% else %}
+                    <h5 class="card-title">Suggested Detail</h5>
+                    <p><strong>Title:</strong> {{ result.title }}</p>
+                    <p><strong>Category:</strong> {{ result.category }}</p>
+                    <p><strong>Description:</strong> {{ result.description }}</p>
+                    <p><strong>Explanation:</strong> {{ result.explanation }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <hr class="my-4">
+
+    <h4 class="mb-3">Search Details</h4>
+
+    <form method="GET" class="row g-2 mb-3">
+        <div class="col-md-8">
+            <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Search by title, tags, or description"
+                value="{{ search_query or '' }}">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-secondary w-100">
+                Search
+            </button>
+        </div>
+    </form>
+
+    {% if search_results is not none %}
+        {% if search_results %}
+            <ul class="list-group mb-4">
+                {% for d in search_results %}
+                    <li class="list-group-item">
+                        <strong>{{ d.title }}</strong> ({{ d.category }})<br>
+                        <small>{{ d.description }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-danger">No matching details found</p>
+        {% endif %}
+    {% endif %}
+
+    <hr class="my-4">
+
+    <h4 class="mb-3">All Architectural Details</h4>
+
+    <ul class="list-group">
+        {% for d in details %}
+            <li class="list-group-item">
+                <strong>{{ d.title }}</strong> ({{ d.category }})<br>
+                <small>{{ d.description }}</small>
+            </li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+</body>
+</html>

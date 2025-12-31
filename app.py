@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from db import db
 import models
 from models import Detail, DetailUsageRule
@@ -14,9 +14,57 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
-@app.route("/")
-def home():
-    return "Hai"
+
+
+@app.route("/", methods=["GET", "POST"])
+def ui():
+    result = None
+    search_results = None
+    details = Detail.query.all()   
+
+    search_query = request.args.get("q")
+    if search_query:
+        search_results = Detail.query.filter(
+            or_(
+                Detail.title.ilike(f"%{search_query}%"),
+                Detail.tags.ilike(f"%{search_query}%"),
+                Detail.description.ilike(f"%{search_query}%")
+            )
+        ).all()
+    
+
+    if request.method == "POST":
+        host = request.form.get("host_element")
+        adjacent = request.form.get("adjacent_element")
+        exposure = request.form.get("exposure")
+
+        rule = DetailUsageRule.query.filter_by(
+            host_element=host,
+            adjacent_element=adjacent,
+            exposure=exposure
+        ).first()
+
+        if rule:
+            detail = Detail.query.get(rule.detail_id)
+            result = {
+                "title": detail.title,
+                "category": detail.category,
+                "description": detail.description,
+                "explanation": f"This detail is suggested because it is used when "
+                            f"{host} connects with {adjacent} under {exposure} conditions."
+            }
+
+        else:
+            result = {"error": "No suitable detail found"}
+          
+    return render_template(
+                "index.html",
+                result=result,
+                details=details,
+                search_results=search_results,
+                search_query=search_query
+            )
+
 
 #API 1
 @app.route("/details", methods=["GET"])
